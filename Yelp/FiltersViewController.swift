@@ -3,12 +3,12 @@
 //  Yelp
 //
 //  Created by Monica Sun on 5/16/15.
-//  Copyright (c) 2015 Timothy Lee. All rights reserved.
+//  Copyright (c) 2015 Monica Sun. All rights reserved.
 //
 
 import UIKit
 
-class FiltersViewController: UIViewController {
+class FiltersViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, SwitchCellDelegate {
     
     @IBOutlet weak var tableView: UITableView!
     
@@ -213,6 +213,25 @@ class FiltersViewController: UIViewController {
         
         return categories
     }
+    
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return categories.count
+    }
+    
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCellWithIdentifier("SwitchCell", forIndexPath: indexPath) as! SwitchCell
+        
+        cell.switchLabel.text = categories[indexPath.row]["name"]
+        cell.delegate = self
+        
+        return cell
+    }
+
     
 
     /*

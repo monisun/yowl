@@ -3,7 +3,7 @@
 //  Yelp
 //
 //  Created by Monica Sun on 5/16/15.
-//  Copyright (c) 2015 Timothy Lee. All rights reserved.
+//  Copyright (c) 2015 Monica Sun. All rights reserved.
 //
 
 import UIKit
