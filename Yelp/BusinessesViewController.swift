@@ -8,7 +8,7 @@
 
 import UIKit
 
-class BusinessesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, FiltersViewControllerDelegate, UISearchBarDelegate, UISearchDisplayDelegate, UIPopoverPresentationControllerDelegate {
+class BusinessesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, FiltersViewControllerDelegate, UISearchBarDelegate, UISearchDisplayDelegate {
 
     var businesses: [Business]!
     var filtered = [Business]()
@@ -78,25 +78,6 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
             self.filtered = results
             self.tableView.reloadData()
         })
-    }
-    
-    func searchBarResultsListButtonClicked(searchBar: UISearchBar) {
-//        let recentSearchLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 500))
-//        recentSearchLabel.text = "coffee"
-//        searchBar.addSubview(recentSearchLabel)
-//        searchBar.sizeToFit()
-//        searchBar.frame.size.height = 300
-//        searchBar.clipsToBounds = false
-//        searchBar.reloadInputViews()
-        
-//        let popoverViewController = storyboard?.instantiateViewControllerWithIdentifier("RecentSearchesViewController") as! RecentSearchesViewController
-//        popoverViewController.modalPresentationStyle = UIModalPresentationStyle.Popover
-//        popoverViewController.popoverPresentationController!.delegate = self
-//        popoverViewController.popoverPresentationController!.sourceView = searchBar
-//        popoverViewController.recentSearches = ["restaurants"]
-//        self.presentViewController(popoverViewController, animated: true, completion: { finished in
-//                println("presented popover")
-//            })
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

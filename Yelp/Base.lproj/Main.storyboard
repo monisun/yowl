@@ -144,61 +144,6 @@
             </objects>
             <point key="canvasLocation" x="1247" y="422"/>
         </scene>
-        <!--Recent Searches View Controller-->
-        <scene sceneID="X6V-0f-8kx">
-            <objects>
-                <viewController storyboardIdentifier="RecentSearchesViewController" id="WTJ-ag-LMg" customClass="RecentSearchesViewController" customModule="Yelp" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="1m2-8Z-vh8"/>
-                        <viewControllerLayoutGuide type="bottom" id="VH4-dD-uAN"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="cP9-kq-YVF">
-                        <rect key="frame" x="0.0" y="0.0" width="400" height="200"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="2Kz-VR-CFs">
-                                <rect key="frame" x="0.0" y="0.0" width="400" height="250"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="150" id="4QX-W0-bgp"/>
-                                </constraints>
-                                <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="searchTermCell" textLabel="J4j-1O-3i0" rowHeight="30" style="IBUITableViewCellStyleDefault" id="GpS-Cs-BMw">
-                                        <rect key="frame" x="0.0" y="0.0" width="400" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="GpS-Cs-BMw" id="3z2-Vc-8zS">
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="J4j-1O-3i0">
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </prototypes>
-                            </tableView>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstAttribute="centerX" secondItem="2Kz-VR-CFs" secondAttribute="centerX" id="2HH-43-t7b"/>
-                            <constraint firstAttribute="centerY" secondItem="2Kz-VR-CFs" secondAttribute="centerY" id="b09-TE-mTx"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" id="PS7-XO-iRb"/>
-                    <nil key="simulatedStatusBarMetrics"/>
-                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="400" height="200"/>
-                    <connections>
-                        <outlet property="tableView" destination="2Kz-VR-CFs" id="por-pE-CAN"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="iLa-Qh-1Fu" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1254" y="-36"/>
-        </scene>
         <!--Navigation Controller-->
         <scene sceneID="6xb-Qg-QlX">
             <objects>
