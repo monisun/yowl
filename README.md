@@ -1,6 +1,6 @@
 ## Yowl
 
-Yowl is a Yelp search app using the [Yelp API](http://developer.rottentomatoes.com/docs/read/JSON).
+Yowl is like Yelp. Search for local venues using filters, text search, or map locator.
 
 Time spent: `20`
 
