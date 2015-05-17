@@ -26,7 +26,7 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
     
     // SORT BY section
     let sortByValues = ["dummy", "Best match", "Distance", "Highest rated"]
-    var selectedSortBy = 1  // default selection to Best Match
+    var selectedSortByIndex = 1  // default selection to Best Match
     
     // CATEGORIES section
     var categories = [[String: String]]()
@@ -73,7 +73,7 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         filters["distance"] = getDistanceInMetersByIndex(selectedDistanceValueIndex) as Double?
         
         // 3. sort by
-        filters["sort"] = getSortByEnumValue(selectedSortBy)?.rawValue
+        filters["sort"] = getSortByEnumValue(selectedSortByIndex)?.rawValue
         
         // 4. categories
         // e.g. ["categories": ["afghani", "african"]]
@@ -164,7 +164,7 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
             if indexPath.row != 0 {
                 cell.nameLabel.text = sortByValues[indexPath.row] as String
                 
-                if indexPath.row == selectedSortBy {
+                if indexPath.row == selectedSortByIndex {
                     cell.accessoryType = .Checkmark
                     cell.filterIsSelected = true
                 } else {
@@ -193,6 +193,26 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         }
     }
     
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        var indexSet = NSMutableIndexSet()
+        switch (indexPath.section) {
+        case 1:
+            // distance
+            selectedDistanceValueIndex = indexPath.row
+            indexSet.addIndex(indexPath.section)
+            tableView.reloadSections(indexSet, withRowAnimation: UITableViewRowAnimation.None)
+        case 2:
+            // sort by
+            selectedSortByIndex = indexPath.row
+            indexSet.addIndex(indexPath.section)
+            tableView.reloadSections(indexSet, withRowAnimation: UITableViewRowAnimation.None)
+        default:
+            NSLog("UNEXPECTED: didSelectRowAtIndexPath for section: \(indexPath.section)")
+        }
+    }
+    
+    
+    // private helper functions
     private func getSectionTitle(section: Int) -> String {
         switch section {
         case 1:
