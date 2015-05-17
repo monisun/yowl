@@ -34,10 +34,10 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
     
     // supported categories
     var food = [[String: String]]()
-    var bars = [[String: String]]()
-    var shopping = [[String: String]]()
-    var active = [[String: String]]()
-    var services = [[String: String]]()
+//    var bars = [[String: String]]()
+//    var shopping = [[String: String]]()
+//    var active = [[String: String]]()
+//    var services = [[String: String]]()
     
     var selectedCategorySegmentIndex = 0    // default to Food
 
@@ -46,10 +46,10 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         
         // load Yelp categories
         food = yelpFoodCategories()
-        bars = loadYelpCategoriesByType("bars")
-        shopping = loadYelpCategoriesByType("shopping")
-        active = loadYelpCategoriesByType("active")
-        services = loadYelpCategoriesByType("localservices")
+//        bars = loadYelpCategoriesByType("bars")
+//        shopping = loadYelpCategoriesByType("shopping")
+//        active = loadYelpCategoriesByType("active")
+//        services = loadYelpCategoriesByType("localservices")
         
         updateCategories(selectedCategorySegmentIndex)
 
@@ -204,9 +204,13 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
             // 3
             let cell = tableView.dequeueReusableCellWithIdentifier("SwitchCell", forIndexPath: indexPath) as! SwitchCell
             if indexPath.row != 0 {
-                cell.switchLabel.text = categories[indexPath.row]["name"]
-                cell.delegate = self
-                cell.filterSwitch.on = switchStates[indexPath.row] ?? false
+                if categories.count > indexPath.row {
+                    cell.switchLabel.text = categories[indexPath.row]["name"]
+                    cell.delegate = self
+                    cell.filterSwitch.on = switchStates[indexPath.row] ?? false
+                } else {
+                    NSLog("UNEXPECTED: categories.count: \(categories.count) does not contain index: \(indexPath.row)")
+                }
             } else {
                 let cell = tableView.dequeueReusableCellWithIdentifier("FilterTitleCell", forIndexPath: indexPath) as! FilterTitleCell
                 cell.filterTitleLabel.text = getSectionTitle(indexPath.section)
@@ -257,13 +261,13 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         case 0:
             categories = food
         case 1:
-            categories = bars
+            categories = loadYelpCategoriesByType("bars")
         case 2:
-            categories = shopping
+            categories = loadYelpCategoriesByType("shopping")
         case 3:
-            categories = active
+            categories = loadYelpCategoriesByType("active")
         case 4:
-            categories = services
+            categories = loadYelpCategoriesByType("localservices")
         default:
             NSLog("UNEXPECTED selectedCategorySegmentIndex: \(selectedCategorySegmentIndex)")
         }

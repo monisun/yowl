@@ -8,13 +8,15 @@
 
 import UIKit
 
-class BusinessesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, FiltersViewControllerDelegate {
+class BusinessesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, FiltersViewControllerDelegate, UISearchBarDelegate, UISearchDisplayDelegate, UIPopoverPresentationControllerDelegate {
 
     var businesses: [Business]!
-    
+    var filtered = [Business]()
     
     @IBOutlet weak var tableView: UITableView!
     
+    var searchBar = UISearchBar()
+    var searchActive = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,8 +26,15 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 120
         
-
-        Business.searchWithTerm("Restaurant", completion: { (businesses: [Business]!, error: NSError!) -> Void in
+        self.navigationItem.titleView = searchBar
+        searchBar.delegate = self
+        searchBar.showsCancelButton = true
+        searchBar.showsSearchResultsButton = true
+        searchBar.placeholder = "coffee in soma"
+        searchBar.translucent = true
+        
+        // landing page query
+        Business.searchWithTerm("food", completion: { (businesses: [Business]!, error: NSError!) -> Void in
             self.businesses = businesses
             self.tableView.reloadData()
             
@@ -34,16 +43,6 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
                 println(business.address!)
             }
         })
-        
-//        Business.searchWithTerm("Restaurants", sort: .Distance, categories: ["food"], deals: true) { (businesses: [Business]!, error: NSError!) -> Void in
-//            self.businesses = businesses
-//            self.tableView.reloadData()
-//            
-//            for business in businesses {
-//                println(business.name!)
-//                println(business.address!)
-//            }
-//        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -55,28 +54,82 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
         return 1
     }
     
+    func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+        searchActive = true
+    }
+    
+    func searchBarTextDidEndEditing(searchBar: UISearchBar) {
+        searchActive = false
+    }
+    
+    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+        searchActive = false
+    }
+    
+    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+        searchActive = true
+    }
+    
+    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+//        filtered.removeAll(keepCapacity: false)
+        let searchTerms = searchBar.text
+
+        Business.searchWithTerm(searchTerms, completion: {  (results: [Business]!, error: NSError!) -> Void in
+            self.filtered = results
+            self.tableView.reloadData()
+        })
+    }
+    
+    func searchBarResultsListButtonClicked(searchBar: UISearchBar) {
+//        let recentSearchLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 500))
+//        recentSearchLabel.text = "coffee"
+//        searchBar.addSubview(recentSearchLabel)
+//        searchBar.sizeToFit()
+//        searchBar.frame.size.height = 300
+//        searchBar.clipsToBounds = false
+//        searchBar.reloadInputViews()
+        
+//        let popoverViewController = storyboard?.instantiateViewControllerWithIdentifier("RecentSearchesViewController") as! RecentSearchesViewController
+//        popoverViewController.modalPresentationStyle = UIModalPresentationStyle.Popover
+//        popoverViewController.popoverPresentationController!.delegate = self
+//        popoverViewController.popoverPresentationController!.sourceView = searchBar
+//        popoverViewController.recentSearches = ["restaurants"]
+//        self.presentViewController(popoverViewController, animated: true, completion: { finished in
+//                println("presented popover")
+//            })
+    }
+    
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if businesses != nil {
-            return businesses!.count
+        if searchActive {
+            return filtered.count
         } else {
-            return 0
+            if businesses != nil {
+                return businesses!.count
+            } else {
+                return 0
+            }
         }
     }
 
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("BusinessCell", forIndexPath: indexPath) as! BusinessCell
-        
-        cell.business = businesses[indexPath.row]
-        
+        if searchActive && (filtered.count > indexPath.row) {
+            cell.business = filtered[indexPath.row]
+        } else {
+            cell.business = businesses[indexPath.row]
+        }
         return cell
     }
     
+    
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        let navigationController = segue.destinationViewController as! UINavigationController
-        let filtersViewController = navigationController.topViewController as! FiltersViewController
-        filtersViewController.delegate = self
+        if segue.identifier == "filtersSegue" {
+            let navigationController = segue.destinationViewController as! UINavigationController
+            let filtersViewController = navigationController.topViewController as! FiltersViewController
+            filtersViewController.delegate = self
+        }
     }
     
     func filtersViewController(filtersViewController: FiltersViewController, didUpdateFilters filters: [String : AnyObject]) {
@@ -121,6 +174,5 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
             self.tableView.reloadData()
         }
     }
-
 
 }
