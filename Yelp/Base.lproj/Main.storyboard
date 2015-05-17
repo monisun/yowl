@@ -129,7 +129,7 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Yelp" id="dGp-Qq-BRf">
-                        <barButtonItem key="leftBarButtonItem" title="Filters" id="MaN-uJ-PSq">
+                        <barButtonItem key="leftBarButtonItem" title="Filter" id="MaN-uJ-PSq">
                             <connections>
                                 <segue destination="7yr-FQ-La4" kind="modal" id="mvc-a8-9eQ"/>
                             </connections>
