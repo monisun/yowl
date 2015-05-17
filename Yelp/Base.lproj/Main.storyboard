@@ -236,13 +236,27 @@
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <segmentedControl hidden="YES" opaque="NO" contentMode="scaleAspectFit" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" translatesAutoresizingMaskIntoConstraints="NO" id="eBj-86-lp4">
+                                                    <rect key="frame" x="99" y="10" width="291" height="29"/>
+                                                    <segments>
+                                                        <segment title="" image="food"/>
+                                                        <segment title="" image="bars"/>
+                                                        <segment title="" image="shopping"/>
+                                                        <segment title="" image="active"/>
+                                                        <segment title="" image="localservices"/>
+                                                    </segments>
+                                                </segmentedControl>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="Tkc-Gj-IKK" firstAttribute="leading" secondItem="Kg6-YV-ydZ" secondAttribute="leading" id="22B-da-R0J"/>
+                                                <constraint firstAttribute="trailing" secondItem="eBj-86-lp4" secondAttribute="trailing" constant="5" id="Bq8-Zy-1hf"/>
+                                                <constraint firstAttribute="centerY" secondItem="eBj-86-lp4" secondAttribute="centerY" id="Obf-Zp-0ev"/>
                                                 <constraint firstAttribute="centerY" secondItem="Tkc-Gj-IKK" secondAttribute="centerY" id="eIF-a3-AvN"/>
+                                                <constraint firstItem="eBj-86-lp4" firstAttribute="leading" secondItem="Tkc-Gj-IKK" secondAttribute="trailing" constant="5" id="mJw-3u-beC"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
+                                            <outlet property="categorySegment" destination="eBj-86-lp4" id="XDc-5w-n08"/>
                                             <outlet property="filterTitleLabel" destination="Tkc-Gj-IKK" id="QKA-IO-cXp"/>
                                         </connections>
                                     </tableViewCell>
@@ -294,6 +308,13 @@
             <point key="canvasLocation" x="762" y="1098"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="active" width="15" height="15"/>
+        <image name="bars" width="13" height="15"/>
+        <image name="food" width="15" height="15"/>
+        <image name="localservices" width="15" height="15"/>
+        <image name="shopping" width="15" height="15"/>
+    </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

@@ -12,7 +12,7 @@ protocol FiltersViewControllerDelegate {
     func filtersViewController(filtersViewController: FiltersViewController, didUpdateFilters filters: [String: AnyObject])
 }
 
-class FiltersViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, SwitchCellDelegate {
+class FiltersViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, SwitchCellDelegate, FilterTitleCellDelegate {
     
     @IBOutlet weak var tableView: UITableView!
     var delegate: FiltersViewControllerDelegate?
@@ -29,13 +29,29 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
     var selectedSortByIndex = 1  // default selection to Best Match
     
     // CATEGORIES section
-    var categories = [[String: String]]()
+    var categories = [[String: String]]()   // selected category type
     var switchStates = [Int: Bool]()
+    
+    // supported categories
+    var food = [[String: String]]()
+    var bars = [[String: String]]()
+    var shopping = [[String: String]]()
+    var active = [[String: String]]()
+    var services = [[String: String]]()
+    
+    var selectedCategorySegmentIndex = 0    // default to Food
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        categories = yelpCategories()
+        // load Yelp categories
+        food = yelpFoodCategories()
+        bars = loadYelpCategoriesByType("bars")
+        shopping = loadYelpCategoriesByType("shopping")
+        active = loadYelpCategoriesByType("active")
+        services = loadYelpCategoriesByType("localservices")
+        
+        updateCategories(selectedCategorySegmentIndex)
 
         tableView.dataSource = self
         tableView.delegate = self
@@ -77,6 +93,7 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         
         // 4. categories
         // e.g. ["categories": ["afghani", "african"]]
+        
         var selectedCategories = [String]()
         for (row, isSelected) in switchStates {
             if isSelected {
@@ -108,6 +125,12 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         }
         
         println("filters VC got this switch event")
+    }
+    
+    func filterTitleCell(filterTitleCell: FilterTitleCell, didChangeValue value: Int) {
+        selectedCategorySegmentIndex = value
+        updateCategories(selectedCategorySegmentIndex)
+        println("category segment value changed event!")
     }
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -155,7 +178,6 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
             } else {
                 let cell = tableView.dequeueReusableCellWithIdentifier("FilterTitleCell", forIndexPath: indexPath) as! FilterTitleCell
                 cell.filterTitleLabel.text = getSectionTitle(indexPath.section)
-
             }
             return cell
             
@@ -188,6 +210,9 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
             } else {
                 let cell = tableView.dequeueReusableCellWithIdentifier("FilterTitleCell", forIndexPath: indexPath) as! FilterTitleCell
                 cell.filterTitleLabel.text = getSectionTitle(indexPath.section)
+                // category segment
+                cell.categorySegment.hidden = false
+                cell.delegate = self
             }
             return cell
         }
@@ -227,23 +252,27 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         }
     }
     
-//    func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-//        switch(section) {
-//        case 1:
-//            return "Distance"
-//        case 2:
-//            return "Sort By"
-//        case 3:
-//            return "Category"
-//        default:
-//            return nil
-//        }
-//    }
-//    
-//    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-//        return 20
-//    }
-
+    private func updateCategories(index: Int) -> Void {
+        switch(selectedCategorySegmentIndex) {
+        case 0:
+            categories = food
+        case 1:
+            categories = bars
+        case 2:
+            categories = shopping
+        case 3:
+            categories = active
+        case 4:
+            categories = services
+        default:
+            NSLog("UNEXPECTED selectedCategorySegmentIndex: \(selectedCategorySegmentIndex)")
+        }
+        
+        var indexSet = NSMutableIndexSet()
+        indexSet.addIndex(3)
+        tableView.reloadSections(indexSet, withRowAnimation: UITableViewRowAnimation.None)
+    }
+    
     /*
     // MARK: - Navigation
 
@@ -283,7 +312,7 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         }
     }
     
-    func yelpCategories() -> [[String: String]] {
+    func yelpFoodCategories() -> [[String: String]] {
         var categories = [["dummy": "dummy"]]
         categories.append(["name" : "Afghan", "code": "afghani"])
         categories.append(["name" : "African", "code": "african"])
@@ -458,7 +487,29 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         return categories
     }
     
-    //    func yelpCategories() -> [[String: String]] {
+    private func loadYelpCategoriesByType(type: String) -> [[String: String]] {
+        // type: {"bars", "shopping", "active"}
+        var results = [[String: String]]()
+        let path = NSBundle.mainBundle().pathForResource("categories", ofType: "json")
+        let jsonData = NSData(contentsOfFile: path!)
+        var jsonResult: NSArray = NSJSONSerialization.JSONObjectWithData(jsonData!, options: NSJSONReadingOptions.MutableContainers, error: nil) as! NSArray
+        
+        for entry in jsonResult {
+            let parentsList = entry["parents"] as! NSArray
+            if parentsList.count > 0 {
+                if let validParent = parentsList[0] as? String {
+                    if validParent == type {
+                        let name = entry["title"] as! String
+                        let code = entry["alias"] as! String
+                        results.append(["name": name, "code": code])
+                    }
+                }
+            }
+        }
+        return results
+    }
+    
+    //    func `() -> [[String: String]] {
     //        let categories = [["name" : "Afghan", "code": "afghani"],
     //            ["name" : "African", "code": "african"],
     //            ["name" : "American, New", "code": "newamerican"],
