@@ -18,6 +18,12 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
     var searchBar = UISearchBar()
     var searchActive = false
     
+    let resultsPerRequest = 20
+    var pageScrolled = 1
+    var lastSearchedTerm = String()
+    var lastUsedFilters = [String : AnyObject]()
+    let maxResultsToKeepInMemory = 1000
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -48,6 +54,14 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+        if businesses != nil && businesses.count > maxResultsToKeepInMemory {
+            businesses.removeRange(Range(start: 0, end: maxResultsToKeepInMemory))
+        }
+        
+        if filtered.count > maxResultsToKeepInMemory {
+            filtered.removeRange(Range(start: 0, end: maxResultsToKeepInMemory))
+        }
+        
     }
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -73,6 +87,7 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
 //        filtered.removeAll(keepCapacity: false)
         let searchTerms = searchBar.text
+        lastSearchedTerm = searchTerms
 
         Business.searchWithTerm(searchTerms, completion: {  (results: [Business]!, error: NSError!) -> Void in
             self.filtered = results
@@ -100,6 +115,18 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
         } else {
             cell.business = businesses[indexPath.row]
         }
+        
+        if indexPath.row % resultsPerRequest == 0 {
+            // fetch more results
+            var filters = lastUsedFilters
+            if !lastSearchedTerm.isEmpty {
+                filters["searchTerm"] = lastSearchedTerm
+            }
+            filters["offset"] = pageScrolled * resultsPerRequest
+            pageScrolled++
+            performSearchWithTerm(filters)
+        }
+        
         return cell
     }
     
@@ -114,7 +141,15 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
     }
     
     func filtersViewController(filtersViewController: FiltersViewController, didUpdateFilters filters: [String : AnyObject]) {
-        var searchTerm = "restaurant"   // default
+        lastUsedFilters = filters
+        performSearchWithTerm(filters)
+    }
+    
+    func performSearchWithTerm(filters: [String : AnyObject]) -> Void {
+        var searchTerm = "restaurant"
+        if let searchTermInFilters = filters["searchTerm"] as? String {
+            searchTerm = searchTermInFilters
+        }
         
         // deals
         var dealsFilter = false
@@ -148,11 +183,29 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
         
         // categories
         var categories = filters["categories"] as? [String]
-
-        Business.searchWithTerm(searchTerm, sort: sort, categories: categories, deals: dealsFilter, distance: distance) {
+        
+        // offset
+        var offset: Int!
+        if let o = filters["offset"] as? Int {
+            offset = o
+        } else {
+            offset = nil
+        }
+        
+        Business.searchWithTerm(searchTerm, sort: sort, categories: categories, deals: dealsFilter, distance: distance, offset: offset) {
             (businesses: [Business]!, error: NSError!) -> Void in
-            self.businesses = businesses
-            self.tableView.reloadData()
+            if businesses != nil {
+                if offset == nil {
+                    // new search
+                    self.businesses = businesses
+                } else {
+                    // fetch for scroll
+                    self.businesses.extend(businesses)
+                }
+                self.tableView.reloadData()
+            } else {
+                NSLog("WARNING: Yelp did not return any results! businesses is nil in callback.")
+            }
         }
     }
 
