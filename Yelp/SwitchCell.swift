@@ -31,6 +31,12 @@ class SwitchCell: UITableViewCell {
         self.layer.cornerRadius = 3
         
         filterSwitch.addTarget(self, action: "switchValueChanged", forControlEvents: UIControlEvents.ValueChanged)
+        
+        // switch styling
+        filterSwitch.thumbTintColor = UIColor(red: 0.39, green:0.13, blue:0.33, alpha:1.00)
+        filterSwitch.onTintColor = UIColor(red: 0.65, green:0.18, blue:0.47, alpha:1.00)
+        filterSwitch.layer.borderColor = UIColor.clearColor().CGColor
+        filterSwitch.layer.shadowColor = UIColor.blackColor().CGColor
     }
 
     override func setSelected(selected: Bool, animated: Bool) {

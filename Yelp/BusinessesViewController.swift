@@ -35,8 +35,6 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
         self.navigationItem.titleView = searchBar
         searchBar.delegate = self
         searchBar.showsCancelButton = true
-        searchBar.showsSearchResultsButton = true
-        searchBar.placeholder = "coffee in soma"
         searchBar.translucent = true
         
         // landing page query

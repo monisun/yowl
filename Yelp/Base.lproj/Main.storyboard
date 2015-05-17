@@ -130,7 +130,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="dGp-Qq-BRf">
                         <nil key="title"/>
-                        <barButtonItem key="leftBarButtonItem" title="Filter" id="MaN-uJ-PSq">
+                        <barButtonItem key="leftBarButtonItem" image="filter" id="MaN-uJ-PSq">
                             <connections>
                                 <segue destination="7yr-FQ-La4" kind="modal" identifier="filtersSegue" id="mvc-a8-9eQ"/>
                             </connections>
@@ -312,6 +312,7 @@
     <resources>
         <image name="active" width="15" height="15"/>
         <image name="bars" width="13" height="15"/>
+        <image name="filter" width="25" height="25"/>
         <image name="food" width="15" height="15"/>
         <image name="localservices" width="15" height="15"/>
         <image name="shopping" width="15" height="15"/>
