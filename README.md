@@ -34,4 +34,7 @@ Time spent: `20`
 
 ![Video Walkthrough](...)
 
-
+Credits
+---------
+* [Yelp API](http://developer.rottentomatoes.com/docs/read/JSON)
+* [AFNetworking](https://github.com/AFNetworking/AFNetworking)
