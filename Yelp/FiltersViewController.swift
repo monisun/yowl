@@ -17,6 +17,18 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
     @IBOutlet weak var tableView: UITableView!
     var delegate: FiltersViewControllerDelegate?
     
+    // DEALS section
+    var dealSwitchState = false // default to false
+    
+    // DISTANCE section
+    var distanceFilterValues = [[String: AnyObject]]()
+    var selectedDistanceValueIndex = 1  // default selection to Auto
+    
+    // SORT BY section
+    let sortByValues = ["dummy", "Best match", "Distance", "Highest rated"]
+    var selectedSortBy = 1  // default selection to Best Match
+    
+    // CATEGORIES section
     var categories = [[String: String]]()
     var switchStates = [Int: Bool]()
 
@@ -27,6 +39,14 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
 
         tableView.dataSource = self
         tableView.delegate = self
+        
+        distanceFilterValues.append(["dummy": "dummy"]) // placeholder
+        distanceFilterValues.append(["name": "Auto", "code": 0])
+        distanceFilterValues.append(["name": "0.3 miles", "code": 0.3])
+        distanceFilterValues.append(["name": "1 mile","code": 1])
+        distanceFilterValues.append(["name": "5 miles","code": 5])
+        distanceFilterValues.append(["name": "20 miles","code": 20])
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -42,11 +62,22 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
     
     
     @IBAction func onSearch(sender: AnyObject) {
-        // e.g. ["categories": ["afghani", "african"]]
+        // keys: "deals", "distance", "sortby", "categories",
         var filters = [String: AnyObject]()
         
-        var selectedCategories = [String]()
+        // 1. deals
+        filters["deals"] = dealSwitchState
         
+        // 2. distance, per Yelp API: "Distance that business is from search location in meters, if a latitude/longitude is specified."
+        // TODO use real location
+        filters["distance"] = getDistanceInMetersByIndex(selectedDistanceValueIndex) as Double?
+        
+        // 3. sort by
+        filters["sort"] = getSortByEnumValue(selectedSortBy)?.rawValue
+        
+        // 4. categories
+        // e.g. ["categories": ["afghani", "african"]]
+        var selectedCategories = [String]()
         for (row, isSelected) in switchStates {
             if isSelected {
                 selectedCategories.append(categories[row]["code"]!)
@@ -65,30 +96,133 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
     func switchCell(switchCell: SwitchCell, didChangeValue value: Bool) {
         let indexPath = tableView.indexPathForCell(switchCell)!
         
-        switchStates[indexPath.row] = value
+        switch(indexPath.section) {
+        case 3:
+            // categories
+            switchStates[indexPath.row] = value
+        case 0:
+            // offering a deal
+            dealSwitchState = value
+        default:
+            NSLog("UNEXPECTED switchCell for section: \(indexPath.section)")
+        }
         
         println("filters VC got this switch event")
     }
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return 1
+        return 4
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categories.count
+        // +1 for all sections except Deals Section
+        switch(section) {
+        case 0:
+            return 1
+        case 1:
+            return 6
+        case 2:
+            return 4
+        default:
+            // 3
+            return categories.count + 1
+        }
     }
     
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("SwitchCell", forIndexPath: indexPath) as! SwitchCell
         
-        cell.switchLabel.text = categories[indexPath.row]["name"]
-        cell.delegate = self
-        
-        cell.filterSwitch.on = switchStates[indexPath.row] ?? false
-        
-        return cell
+        switch(indexPath.section) {
+        case 0:
+            let cell = tableView.dequeueReusableCellWithIdentifier("SwitchCell", forIndexPath: indexPath) as! SwitchCell
+            cell.switchLabel.text = "Offering a Deal"
+            cell.delegate = self
+            cell.filterSwitch.on = dealSwitchState
+            return cell
+
+        case 1:
+            let cell = tableView.dequeueReusableCellWithIdentifier("SelectionCell", forIndexPath: indexPath) as! SelectionCell
+            if indexPath.row != 0 {
+                cell.nameLabel.text = distanceFilterValues[indexPath.row]["name"] as? String
+                
+                if indexPath.row == selectedDistanceValueIndex {
+                    cell.accessoryType = .Checkmark
+                    cell.filterIsSelected = true
+                } else {
+                    cell.accessoryType = .None
+                    cell.filterIsSelected = false
+                }
+            } else {
+                let cell = tableView.dequeueReusableCellWithIdentifier("FilterTitleCell", forIndexPath: indexPath) as! FilterTitleCell
+                cell.filterTitleLabel.text = getSectionTitle(indexPath.section)
+
+            }
+            return cell
+            
+        case 2:
+            let cell = tableView.dequeueReusableCellWithIdentifier("SelectionCell", forIndexPath: indexPath) as! SelectionCell
+            if indexPath.row != 0 {
+                cell.nameLabel.text = sortByValues[indexPath.row] as String
+                
+                if indexPath.row == selectedSortBy {
+                    cell.accessoryType = .Checkmark
+                    cell.filterIsSelected = true
+                } else {
+                    cell.accessoryType = .None
+                    cell.filterIsSelected = false
+                }
+            } else {
+                let cell = tableView.dequeueReusableCellWithIdentifier("FilterTitleCell", forIndexPath: indexPath) as! FilterTitleCell
+                cell.filterTitleLabel.text = getSectionTitle(indexPath.section)
+
+            }
+            return cell
+            
+        default:
+            // 3
+            let cell = tableView.dequeueReusableCellWithIdentifier("SwitchCell", forIndexPath: indexPath) as! SwitchCell
+            if indexPath.row != 0 {
+                cell.switchLabel.text = categories[indexPath.row]["name"]
+                cell.delegate = self
+                cell.filterSwitch.on = switchStates[indexPath.row] ?? false
+            } else {
+                let cell = tableView.dequeueReusableCellWithIdentifier("FilterTitleCell", forIndexPath: indexPath) as! FilterTitleCell
+                cell.filterTitleLabel.text = getSectionTitle(indexPath.section)
+            }
+            return cell
+        }
     }
+    
+    private func getSectionTitle(section: Int) -> String {
+        switch section {
+        case 1:
+            return "Distance"
+        case 2:
+            return "Sort By"
+        case 3:
+            return "Category"
+        default:
+            NSLog("UNEXPECTED section to display Filter Title Cell: \(section)")
+            return ""
+        }
+    }
+    
+//    func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+//        switch(section) {
+//        case 1:
+//            return "Distance"
+//        case 2:
+//            return "Sort By"
+//        case 3:
+//            return "Category"
+//        default:
+//            return nil
+//        }
+//    }
+//    
+//    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+//        return 20
+//    }
 
     /*
     // MARK: - Navigation
@@ -102,10 +236,36 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
     
     
     
+    private func getDistanceInMetersByIndex(index: Int) -> Double? {
+        let conversionFactor = 1609.34
+        switch (index) {
+        case 1:
+            return nil    // TODO Auto means filter doesn't apply?
+        case 2, 3, 4, 5:
+            return conversionFactor * (distanceFilterValues[index]["code"] as! Double)
+        default:
+            NSLog("UNEXPECTED: distanceFilterValues index: \(index)")
+            return nil
+        }
+    }
     
+    private func getSortByEnumValue(index: Int) -> YelpSortMode? {
+        switch index {
+        case 1:
+            return YelpSortMode.BestMatched
+        case 2:
+            return YelpSortMode.Distance
+        case 3:
+            return YelpSortMode.HighestRated
+        default:
+            NSLog("UNEXPECTED: invalid index for YelpSortMode: \(index)")
+            return nil
+        }
+    }
     
     func yelpCategories() -> [[String: String]] {
-        var categories = [["name" : "Afghan", "code": "afghani"]]
+        var categories = [["dummy": "dummy"]]
+        categories.append(["name" : "Afghan", "code": "afghani"])
         categories.append(["name" : "African", "code": "african"])
         categories.append(["name" : "American, New", "code": "newamerican"])
         categories.append(["name" : "American, Traditional", "code": "tradamerican"])

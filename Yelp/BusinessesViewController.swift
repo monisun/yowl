@@ -25,7 +25,7 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
         tableView.estimatedRowHeight = 120
         
 
-        Business.searchWithTerm("Thai", completion: { (businesses: [Business]!, error: NSError!) -> Void in
+        Business.searchWithTerm("Restaurant", completion: { (businesses: [Business]!, error: NSError!) -> Void in
             self.businesses = businesses
             self.tableView.reloadData()
             
@@ -80,11 +80,42 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
     }
     
     func filtersViewController(filtersViewController: FiltersViewController, didUpdateFilters filters: [String : AnyObject]) {
-        var searchTerm = "restaurant"
+        var searchTerm = "restaurant"   // default
         
+        // deals
+        var dealsFilter = false
+        if let deals = filters["deals"] as! Bool? {
+            dealsFilter = deals
+        }
+        
+        // distance
+        var distance: Double!
+        if let d = filters["distance"] as! Double? {
+            distance = d
+        } else {
+            distance = nil
+        }
+        
+        // sort by
+        var sort: YelpSortMode!
+        if let sortMode = filters["sort"] as! YelpSortMode.RawValue? {
+            switch sortMode {
+            case 0:
+                sort = YelpSortMode.BestMatched
+            case 1:
+                sort = YelpSortMode.Distance
+            default:
+                // 2
+                sort = YelpSortMode.HighestRated
+            }
+        } else {
+            sort = nil
+        }
+        
+        // categories
         var categories = filters["categories"] as? [String]
-        
-        Business.searchWithTerm(searchTerm, sort: nil, categories: categories, deals: nil) {
+
+        Business.searchWithTerm(searchTerm, sort: sort, categories: categories, deals: dealsFilter, distance: distance) {
             (businesses: [Business]!, error: NSError!) -> Void in
             self.businesses = businesses
             self.tableView.reloadData()

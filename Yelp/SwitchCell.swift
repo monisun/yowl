@@ -24,6 +24,12 @@ class SwitchCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         
+        self.selectionStyle = .None
+        
+        self.layer.borderWidth = 0.3
+        self.layer.borderColor = UIColor.lightGrayColor().CGColor
+        self.layer.cornerRadius = 3
+        
         filterSwitch.addTarget(self, action: "switchValueChanged", forControlEvents: UIControlEvents.ValueChanged)
     }
 
