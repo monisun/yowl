@@ -32,7 +32,7 @@ Time spent: `20`
 
 ### Walkthrough
 
-![Video Walkthrough](...)
+![Video Walkthrough](https://github.com/monisun/yowl/blob/master/yelp_demo.gif)
 
 Credits
 ---------
