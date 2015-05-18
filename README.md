@@ -1,6 +1,6 @@
 ## Yowl
 
-Yowl is a Yelp search app using the [Yelp API](http://developer.rottentomatoes.com/docs/read/JSON).
+Yowl is like Yelp. Search for local venues using filters, text search, or map locator.
 
 Time spent: `20`
 
@@ -23,10 +23,10 @@ Time spent: `20`
 
 - [x] Search results page
    - [x] Infinite scroll for restaurant results
-   - [ ] Implement map view of restaurant results
-- [ ] Filter page
-   - [ ] Radius filter should expand as in the real Yelp app
-   - [ ] Categories should show a subset of the full list with a "See All" row to expand. Category list is here: http://www.yelp.com/developers/documentation/category_list (Links to an external site.)
+   - [x] Implement map view of restaurant results. (CLGeocoder seems to be throttling, so only 1 marker is loaded.)
+- [x] Filter page
+   - [x] Radius filter should expand as in the real Yelp app
+   - [x] Categories should show a subset of the full list with a "See All" row to expand. Category list is here: http://www.yelp.com/developers/documentation/category_list (Links to an external site.)
 - [x] Implement a custom switch
 - [ ] Implement the restaurant detail page.
 
