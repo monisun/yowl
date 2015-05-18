@@ -249,7 +249,8 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
             // sort by
             selectedSortByIndex = indexPath.row
             indexSet.addIndex(indexPath.section)
-            tableView.reloadSections(indexSet, withRowAnimation: UITableViewRowAnimation.None)
+            tableView.reloadData()
+//            tableView.reloadSections(indexSet, withRowAnimation: UITableViewRowAnimation.None)
         case 3:
             if categoriesIsCollapsed {
                 if indexPath.row == 3 {
@@ -560,6 +561,7 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     
     private func updateCollapsedCategories() -> Void {
+        collapsedCategories.removeAll(keepCapacity: false)
         for i in (0..<3) {
             collapsedCategories.append(categories[i])
         }

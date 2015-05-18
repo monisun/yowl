@@ -135,6 +135,11 @@
                                 <segue destination="7yr-FQ-La4" kind="modal" identifier="filtersSegue" id="mvc-a8-9eQ"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Map" id="UPh-10-uLv">
+                            <connections>
+                                <segue destination="CvY-iC-g8h" kind="modal" identifier="mapSegue" modalTransitionStyle="partialCurl" id="HoC-5y-bEd"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="tableView" destination="jje-j9-lpO" id="vxw-gg-amc"/>
@@ -143,6 +148,65 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Fgb-4b-F1b" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1247" y="422"/>
+        </scene>
+        <!--Map View Controller-->
+        <scene sceneID="eBZ-c9-QXD">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ZsU-ov-4k8" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <viewController id="EbJ-Cf-qBj" customClass="MapViewController" customModule="Yelp" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="k8w-8T-oYf"/>
+                        <viewControllerLayoutGuide type="bottom" id="Dua-V7-pEV"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="a6R-lP-aUu">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CPO-yW-J1H" customClass="GMSMapView">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="pin" translatesAutoresizingMaskIntoConstraints="NO" id="Roi-l4-j73" userLabel="pin">
+                                        <rect key="frame" x="145" y="271" width="30" height="55"/>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="CPO-yW-J1H" firstAttribute="leading" secondItem="a6R-lP-aUu" secondAttribute="leading" id="2zq-2g-O1Z"/>
+                            <constraint firstAttribute="centerY" secondItem="CPO-yW-J1H" secondAttribute="centerY" id="HZu-3n-pkI"/>
+                            <constraint firstItem="CPO-yW-J1H" firstAttribute="bottom" secondItem="Dua-V7-pEV" secondAttribute="top" id="KZ7-Pf-rmQ"/>
+                            <constraint firstAttribute="centerX" secondItem="CPO-yW-J1H" secondAttribute="centerX" id="a8m-ON-KZq"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="JNl-QZ-orF">
+                        <nil key="title"/>
+                        <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" id="LYK-X6-qaw">
+                            <rect key="frame" x="65" y="7" width="191" height="30"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <segments>
+                                <segment title="Normal"/>
+                                <segment title="Satellite"/>
+                                <segment title="Hybrid"/>
+                            </segments>
+                            <connections>
+                                <action selector="mapTypeSegmentPressed:" destination="EbJ-Cf-qBj" eventType="valueChanged" id="9jI-gr-Buq"/>
+                            </connections>
+                        </segmentedControl>
+                        <barButtonItem key="rightBarButtonItem" title="List" id="MRS-xa-5gD">
+                            <connections>
+                                <segue destination="2xI-yr-O5N" kind="push" id="r5r-zO-kT3"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="mapCenterPinImage" destination="Roi-l4-j73" id="W3c-WB-guW"/>
+                        <outlet property="mapView" destination="CPO-yW-J1H" id="AdA-fp-7Dt"/>
+                    </connections>
+                </viewController>
+            </objects>
+            <point key="canvasLocation" x="2334" y="422"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="6xb-Qg-QlX">
@@ -322,6 +386,24 @@
             </objects>
             <point key="canvasLocation" x="762" y="1098"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="6Dg-bC-LzW">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="CvY-iC-g8h" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="sek-pl-IqX">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="EbJ-Cf-qBj" kind="relationship" relationship="rootViewController" id="yuk-Xz-xTg"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="efD-cu-ZJa" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1802" y="422"/>
+        </scene>
     </scenes>
     <resources>
         <image name="active" width="15" height="15"/>
@@ -330,6 +412,7 @@
         <image name="filter" width="25" height="25"/>
         <image name="food" width="15" height="15"/>
         <image name="localservices" width="15" height="15"/>
+        <image name="pin" width="32" height="60"/>
         <image name="shopping" width="15" height="15"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
@@ -337,4 +420,7 @@
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
+    <inferredMetricsTieBreakers>
+        <segue reference="r5r-zO-kT3"/>
+    </inferredMetricsTieBreakers>
 </document>

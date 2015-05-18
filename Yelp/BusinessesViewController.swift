@@ -34,7 +34,7 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
         
         self.navigationItem.titleView = searchBar
         searchBar.delegate = self
-        searchBar.showsCancelButton = true
+//        searchBar.showsCancelButton = true
         searchBar.translucent = true
         
         // landing page query
@@ -136,6 +136,16 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
             let navigationController = segue.destinationViewController as! UINavigationController
             let filtersViewController = navigationController.topViewController as! FiltersViewController
             filtersViewController.delegate = self
+        }
+        
+        if segue.identifier == "mapSegue" {
+            let navigationController = segue.destinationViewController as! UINavigationController
+            let mapViewController = navigationController.topViewController as!  MapViewController
+            if searchActive {
+                mapViewController.businesses = filtered
+            } else {
+                mapViewController.businesses = businesses
+            }
         }
     }
     

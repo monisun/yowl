@@ -23,13 +23,16 @@ PODS:
   - BDBOAuth1Manager (1.5.0):
     - AFNetworking/NSURLConnection (~> 2.5.0)
     - AFNetworking/NSURLSession (~> 2.5.0)
+  - Google-Maps-iOS-SDK (1.9.2)
 
 DEPENDENCIES:
   - AFNetworking
   - BDBOAuth1Manager
+  - Google-Maps-iOS-SDK
 
 SPEC CHECKSUMS:
   AFNetworking: e1d86c2a96bb5d2e7408da36149806706ee122fe
   BDBOAuth1Manager: 2e28773b58f880fb36b5cd3efcf0b1fefbc78a99
+  Google-Maps-iOS-SDK: 4c008abdb68e03ae125c7f674be841d369e2b3de
 
 COCOAPODS: 0.37.1
