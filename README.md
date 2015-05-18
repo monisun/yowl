@@ -18,12 +18,16 @@ Time spent: `20`
    - [x] Use the default UISwitch for on/off states.
    - [x] Clicking on the "Search" button should dismiss the filters page and trigger the search w/ the new filter settings.
    - [x] Display some of the available Yelp categories (choose any 3-4 that you want).
+      - [x] User can choose between Food, Bars/Nightlife, Shopping, Activities, or Local Services categories. 
 
 #### Optional
 
 - [x] Search results page
    - [x] Infinite scroll for restaurant results
    - [x] Implement map view of restaurant results. (CLGeocoder seems to be throttling, so only 1 marker is loaded.)
+   - [x] Integrated Google Maps iOS SDK to render maps in normal, satellite, or hybrid view modes.
+   - [x] Implemented Location Services to ask user for permission to access location while app is in foreground.
+   - [x] Map automatically recenters to user's current location via center pin.
 - [x] Filter page
    - [x] Radius filter should expand as in the real Yelp app
    - [x] Categories should show a subset of the full list with a "See All" row to expand. Category list is here: http://www.yelp.com/developers/documentation/category_list (Links to an external site.)
@@ -32,7 +36,8 @@ Time spent: `20`
 
 ### Walkthrough
 
-![Video Walkthrough](https://github.com/monisun/yowl/blob/master/yelp_demo.gif)
+<img src="https://github.com/monisun/yowl/blob/master/yelp_demo.gif" width="350px"/>
+<img src="https://github.com/monisun/yowl/blob/master/yelp_demo2.gif" width="350px"/>
 
 Credits
 ---------
