@@ -46,3 +46,8 @@ Credits
 ---------
 * [Yelp API](http://developer.rottentomatoes.com/docs/read/JSON)
 * [AFNetworking](https://github.com/AFNetworking/AFNetworking)
+
+### License
+
+Copyright (c) 2015 Monica Sun
+Licensed under the MIT license.
