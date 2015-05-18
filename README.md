@@ -2,7 +2,7 @@
 
 Yowl is like Yelp. Search for local venues using filters, text search, or map locator.
 
-<img src="https://github.com/monisun/yowl/blob/master/launch.png" width="75px"/>
+<img src="https://github.com/monisun/yowl/blob/master/launch.png" width="150px"/>
 
 Time spent: `20`
 
