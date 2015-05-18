@@ -35,6 +35,8 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
     // CATEGORIES section
     var categories = [[String: String]]()
     var switchStates = [Int: Bool]()
+    var collapsedCategories = [[String: String]]()
+    var categoriesIsCollapsed = true
     
     // supported categories
     var food = [[String: String]]()
@@ -146,7 +148,7 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
             return 3
         default:
             // 3
-            return categories.count
+            return categoriesIsCollapsed ? collapsedCategories.count : categories.count
         }
     }
     
@@ -198,13 +200,28 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         case 3:
             // 3
             var cell = tableView.dequeueReusableCellWithIdentifier("SwitchCell", forIndexPath: indexPath) as! SwitchCell
-                if categories.count > indexPath.row {
-                    cell.switchLabel.text = categories[indexPath.row]["name"]
-                    cell.delegate = self
-                    cell.filterSwitch.on = switchStates[indexPath.row] ?? false
-                } else {
-                    NSLog("UNEXPECTED: categories.count: \(categories.count) does not contain index: \(indexPath.row)")
+            if categoriesIsCollapsed {
+                cell.switchLabel.text = collapsedCategories[indexPath.row]["name"]
+                cell.delegate = self
+                cell.filterSwitch.on = switchStates[indexPath.row] ?? false
+                cell.filterSwitch.hidden = false
+                cell.switchLabel.textColor = UIColor.blackColor()
+                
+                // handle "See All" Row
+                if cell.switchLabel.text!.rangeOfString("See All") != nil {
+                    cell.filterSwitch.hidden = true
+                    cell.switchLabel.textColor = UIColor.grayColor()
                 }
+                
+            } else if categories.count > indexPath.row {
+                cell.switchLabel.text = categories[indexPath.row]["name"]
+                cell.delegate = self
+                cell.filterSwitch.on = switchStates[indexPath.row] ?? false
+                cell.filterSwitch.hidden = false
+                cell.switchLabel.textColor = UIColor.blackColor()
+            } else {
+                NSLog("UNEXPECTED: categories.count: \(categories.count) does not contain index: \(indexPath.row)")
+            }
             return cell
         default:
             NSLog("ERROR: Unexpected indexPath.section: \(indexPath.section) in cellForRowAtIndexPath")
@@ -233,6 +250,13 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
             selectedSortByIndex = indexPath.row
             indexSet.addIndex(indexPath.section)
             tableView.reloadSections(indexSet, withRowAnimation: UITableViewRowAnimation.None)
+        case 3:
+            if categoriesIsCollapsed {
+                if indexPath.row == 3 {
+                    categoriesIsCollapsed = false
+                    tableView.reloadSections(NSMutableIndexSet(index: 3), withRowAnimation: UITableViewRowAnimation.None)
+                }
+            }
         default:
             NSLog("UNEXPECTED: didSelectRowAtIndexPath for section: \(indexPath.section)")
         }
@@ -294,6 +318,8 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         default:
             NSLog("UNEXPECTED selectedCategorySegmentIndex: \(selectedCategorySegmentIndex)")
         }
+        
+        updateCollapsedCategories()
         
         var indexSet = NSMutableIndexSet()
         indexSet.addIndex(3)
@@ -531,6 +557,13 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
             }
         }
         return results
+    }
+    
+    private func updateCollapsedCategories() -> Void {
+        for i in (0..<3) {
+            collapsedCategories.append(categories[i])
+        }
+        collapsedCategories.append(["name" : "      See All", "code": ""])
     }
     
 }
