@@ -24,8 +24,8 @@ Time spent: `20`
 - [x] Search results page
    - [x] Infinite scroll for restaurant results
    - [ ] Implement map view of restaurant results
-- [ ] Filter page
-   - [ ] Radius filter should expand as in the real Yelp app
+- [x] Filter page
+   - [x] Radius filter should expand as in the real Yelp app
    - [ ] Categories should show a subset of the full list with a "See All" row to expand. Category list is here: http://www.yelp.com/developers/documentation/category_list (Links to an external site.)
 - [x] Implement a custom switch
 - [ ] Implement the restaurant detail page.
