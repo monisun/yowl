@@ -26,7 +26,8 @@ Time spent: `20`
 
 - [x] Search results page
    - [x] Infinite scroll for restaurant results
-   - [x] Implement map view of restaurant results. (CLGeocoder seems to be throttling, so only 1 marker is loaded.)
+   - [x] Implement map view of restaurant results. Map markers are loaded for all Business results.
+   - [x] Map automatically renders to include all markers within view bounds.
    - [x] Integrated Google Maps iOS SDK to render maps in normal, satellite, or hybrid view modes.
    - [x] Implemented Location Services to ask user for permission to access location while app is in foreground.
    - [x] Map automatically recenters to user's current location via center pin.
