@@ -17,26 +17,30 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
     @IBOutlet weak var tableView: UITableView!
     var delegate: FiltersViewControllerDelegate?
     
+    var distanceFilterSectionIsExpanded = false
+    
     // DEALS section
-    var dealSwitchState = false // default to false
+    var dealSwitchState = false
     
     // DISTANCE section
     var distanceFilterValues = [[String: AnyObject]]()
     var selectedDistanceValueIndex = 1  // default selection to Auto
     
+    var collapsedDistanceFilterValues = [[String: AnyObject]]()
+    
     // SORT BY section
-    let sortByValues = ["dummy", "Best match", "Distance", "Highest rated"]
-    var selectedSortByIndex = 1  // default selection to Best Match
+    let sortByValues = ["Best match", "Distance", "Highest rated"]
+    var selectedSortByIndex = 0  // default selection to Best Match
     
     // CATEGORIES section
-    var categories = [[String: String]]()   // selected category type
+    var categories = [[String: String]]()
     var switchStates = [Int: Bool]()
     
     // supported categories
     var food = [[String: String]]()
     
     var selectedCategorySegmentIndex = 0    // default to Food
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -48,12 +52,14 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         tableView.dataSource = self
         tableView.delegate = self
         
-        distanceFilterValues.append(["dummy": "dummy"]) // placeholder
+        distanceFilterValues.append(["name": "", "code": 0])
         distanceFilterValues.append(["name": "Auto", "code": 0])
         distanceFilterValues.append(["name": "0.3 miles", "code": 0.3])
         distanceFilterValues.append(["name": "1 mile","code": 1])
         distanceFilterValues.append(["name": "5 miles","code": 5])
         distanceFilterValues.append(["name": "20 miles","code": 20])
+        
+        collapsedDistanceFilterValues.append(["name": "", "code": 0])
         
     }
 
@@ -130,17 +136,17 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // +1 for all sections except Deals Section
         switch(section) {
         case 0:
             return 1
         case 1:
-            return 6
+            println("distanceFilterSectionIsExpanded: \(distanceFilterSectionIsExpanded)")
+            return distanceFilterSectionIsExpanded ? distanceFilterValues.count : collapsedDistanceFilterValues.count
         case 2:
-            return 4
+            return 3
         default:
             // 3
-            return categories.count + 1
+            return categories.count
         }
     }
     
@@ -149,16 +155,19 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         
         switch(indexPath.section) {
         case 0:
-            let cell = tableView.dequeueReusableCellWithIdentifier("SwitchCell", forIndexPath: indexPath) as! SwitchCell
+            var cell = tableView.dequeueReusableCellWithIdentifier("SwitchCell", forIndexPath: indexPath) as! SwitchCell
             cell.switchLabel.text = "Offering a Deal"
             cell.delegate = self
             cell.filterSwitch.on = dealSwitchState
             return cell
 
         case 1:
-            let cell = tableView.dequeueReusableCellWithIdentifier("SelectionCell", forIndexPath: indexPath) as! SelectionCell
-            if indexPath.row != 0 {
-                cell.nameLabel.text = distanceFilterValues[indexPath.row]["name"] as? String
+            var cell = tableView.dequeueReusableCellWithIdentifier("SelectionCell", forIndexPath: indexPath) as! SelectionCell
+                if distanceFilterSectionIsExpanded {
+                    cell.nameLabel.text = distanceFilterValues[indexPath.row]["name"] as? String
+                } else {
+                    cell.nameLabel.text = distanceFilterValues[selectedDistanceValueIndex]["name"] as? String
+                }
                 
                 if indexPath.row == selectedDistanceValueIndex {
                     cell.accessoryType = .Checkmark
@@ -167,17 +176,16 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
                     cell.accessoryType = .None
                     cell.filterIsSelected = false
                 }
-            } else {
-                let cell = tableView.dequeueReusableCellWithIdentifier("FilterTitleCell", forIndexPath: indexPath) as! FilterTitleCell
-                cell.filterTitleLabel.text = getSectionTitle(indexPath.section)
-            }
+                // show expand button on "Auto" row
+                if indexPath.row == 0 {
+                    cell.expandButton.hidden = false
+                }
             return cell
             
         case 2:
-            let cell = tableView.dequeueReusableCellWithIdentifier("SelectionCell", forIndexPath: indexPath) as! SelectionCell
-            if indexPath.row != 0 {
+            var cell = tableView.dequeueReusableCellWithIdentifier("SelectionCell", forIndexPath: indexPath) as! SelectionCell
                 cell.nameLabel.text = sortByValues[indexPath.row] as String
-                
+            
                 if indexPath.row == selectedSortByIndex {
                     cell.accessoryType = .Checkmark
                     cell.filterIsSelected = true
@@ -185,17 +193,11 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
                     cell.accessoryType = .None
                     cell.filterIsSelected = false
                 }
-            } else {
-                let cell = tableView.dequeueReusableCellWithIdentifier("FilterTitleCell", forIndexPath: indexPath) as! FilterTitleCell
-                cell.filterTitleLabel.text = getSectionTitle(indexPath.section)
-
-            }
             return cell
             
-        default:
+        case 3:
             // 3
-            let cell = tableView.dequeueReusableCellWithIdentifier("SwitchCell", forIndexPath: indexPath) as! SwitchCell
-            if indexPath.row != 0 {
+            var cell = tableView.dequeueReusableCellWithIdentifier("SwitchCell", forIndexPath: indexPath) as! SwitchCell
                 if categories.count > indexPath.row {
                     cell.switchLabel.text = categories[indexPath.row]["name"]
                     cell.delegate = self
@@ -203,14 +205,10 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
                 } else {
                     NSLog("UNEXPECTED: categories.count: \(categories.count) does not contain index: \(indexPath.row)")
                 }
-            } else {
-                let cell = tableView.dequeueReusableCellWithIdentifier("FilterTitleCell", forIndexPath: indexPath) as! FilterTitleCell
-                cell.filterTitleLabel.text = getSectionTitle(indexPath.section)
-                // category segment
-                cell.categorySegment.hidden = false
-                cell.delegate = self
-            }
             return cell
+        default:
+            NSLog("ERROR: Unexpected indexPath.section: \(indexPath.section) in cellForRowAtIndexPath")
+            return UITableViewCell()
         }
     }
     
@@ -218,10 +216,18 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         var indexSet = NSMutableIndexSet()
         switch (indexPath.section) {
         case 1:
-            // distance
-            selectedDistanceValueIndex = indexPath.row
-            indexSet.addIndex(indexPath.section)
-            tableView.reloadSections(indexSet, withRowAnimation: UITableViewRowAnimation.None)
+            if indexPath.row == 0 {
+                if distanceFilterSectionIsExpanded {
+                    distanceFilterSectionIsExpanded = false
+                } else {
+                    distanceFilterSectionIsExpanded = true
+                }
+            } else {
+
+                selectedDistanceValueIndex = indexPath.row
+            }
+
+            tableView.reloadData()
         case 2:
             // sort by
             selectedSortByIndex = indexPath.row
@@ -232,15 +238,40 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
         }
     }
     
+    func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        if section == 3 {
+            return CGFloat(0)
+        } else {
+            return CGFloat(50)
+        }
+    }
+    
+    func tableView(tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        
+        switch (section) {
+        case 0, 1, 2:
+            let titleCell = tableView.dequeueReusableCellWithIdentifier("FilterTitleCell") as! FilterTitleCell
+            titleCell.filterTitleLabel.text = getSectionTitle(section)
+            titleCell.backgroundColor = UIColor.whiteColor()
+            if section == 2 {
+                titleCell.categorySegment.hidden = false
+                titleCell.delegate = self
+            }
+            return titleCell
+        default:
+            // no header for Deals (section 0)
+            return nil
+        }
+    }
     
     // private helper functions
     private func getSectionTitle(section: Int) -> String {
         switch section {
-        case 1:
+        case 0:
             return "Distance"
-        case 2:
+        case 1:
             return "Sort By"
-        case 3:
+        case 2:
             return "Category"
         default:
             NSLog("UNEXPECTED section to display Filter Title Cell: \(section)")
@@ -279,12 +310,10 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     */
     
-    
-    
     private func getDistanceInMetersByIndex(index: Int) -> Double? {
         let conversionFactor = 1609.34
         switch (index) {
-        case 1:
+        case 0, 1:
             return nil
         case 2, 3, 4, 5:
             return conversionFactor * (distanceFilterValues[index]["code"] as! Double)
@@ -309,8 +338,7 @@ class FiltersViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     
     func yelpFoodCategories() -> [[String: String]] {
-        var categories = [["dummy": "dummy"]]
-        categories.append(["name" : "Afghan", "code": "afghani"])
+        var categories = [["name" : "Afghan", "code": "afghani"]]
         categories.append(["name" : "African", "code": "african"])
         categories.append(["name" : "American, New", "code": "newamerican"])
         categories.append(["name" : "American, Traditional", "code": "tradamerican"])

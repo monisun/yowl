@@ -10,8 +10,9 @@ import UIKit
 
 class SelectionCell: UITableViewCell {
     
-    
     @IBOutlet weak var nameLabel: UILabel!
+    
+    @IBOutlet weak var expandButton: UIButton!
     
     var filterIsSelected = false
 
