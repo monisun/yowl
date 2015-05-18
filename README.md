@@ -32,8 +32,8 @@ Time spent: `20`
 
 ### Walkthrough
 
-<img src="https://github.com/monisun/yowl/blob/master/yelp_demo.gif" width="300px"/>
-<img src="https://github.com/monisun/yowl/blob/master/yelp_demo2.gif" width="300px"/>
+<img src="https://github.com/monisun/yowl/blob/master/yelp_demo.gif" width="400px"/>
+<img src="https://github.com/monisun/yowl/blob/master/yelp_demo2.gif" width="400px"/>
 
 Credits
 ---------
