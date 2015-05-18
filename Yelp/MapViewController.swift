@@ -16,16 +16,14 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     @IBOutlet weak var mapCenterPinImage: UIImageView!
     
     var businesses = [Business]()
-    var pins = [[String: AnyObject]]()     // {"name", "coordinate", "image"}
+    var pinMarkerList = [PinMarker]()
     var placesTask = NSURLSessionDataTask()
     
     let geocoder = CLGeocoder()
     let locationManager = CLLocationManager()
-    var defaults = NSUserDefaults.standardUserDefaults()
     var lastKnownCameraPosition = CLLocationCoordinate2D()
     
-    // indicates whether location is for start or end location
-    var willSetStartLocation = true
+    let manager = AFHTTPRequestOperationManager()
     
     var mapRadius: Double {
         get {
@@ -45,14 +43,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         
         if businesses.count > 0 {
             self.loadMarkers("marker", completion: { (results) -> Void in
-                if let results = results as [PinMarker]! {
-                    println("results:")
-                    println(results)
-                    
-                    for pin in results {
-                        pin.map = self.mapView
-                    }
-                }
             })
         }
     }
@@ -60,28 +50,18 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     
     func loadMarkers(markerImageName: String, completion: ([PinMarker]) -> Void) {
         var pinList = [PinMarker]()
+//        var shortened = businesses[0..<4]
         
-        var shortened = businesses[0..<4]
-        
-        for business in shortened {
+        for business in businesses {
             var markerImage = UIImage(named: markerImageName)
             var coordinate = CLLocationCoordinate2D()
             var name = String()
             if let address = business.address as String? {
                 println(address)
-                geocoder.geocodeAddressString(address, completionHandler: {(placemarks: [AnyObject]!, error: NSError!) -> Void in
-                    if let placemark = placemarks?[0] as? CLPlacemark {
-                        coordinate = placemark.location.coordinate as CLLocationCoordinate2D
-                        println(coordinate.latitude)
-                        println(coordinate.longitude)
-                        name = business.name!
-                        println(name)
-                        
-                        var pin = PinMarker(coordinate: coordinate, image: markerImage!, snippetText: name, imageUrl: business.imageURL!)
-                        pin.map = self.mapView
-                        pinList.append(pin)
-                        self.mapView.camera = GMSCameraPosition(target: coordinate, zoom: 12, bearing: 0, viewingAngle: 0)
-                    }
+                var bounds = GMSCoordinateBounds()
+                
+                geocodeLocations(address, name: business.name!, imageUrl: business.imageURL!, completion: {
+                    
                 })
                 
             }
@@ -90,6 +70,53 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         dispatch_async(dispatch_get_main_queue()) {
             completion(pinList)
         }
+    }
+    
+    func geocodeLocations(address: String, name: String, imageUrl: NSURL, completion: () -> Void) {
+        // https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=API_KEY
+        var url = "https://maps.googleapis.com/maps/api/geocode/json?address=\(address)&key=AIzaSyCUKOGbyRpou8Ll_Cs5Vlsu88LA9WkLRP8"
+        url = url.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
+        var bounds = GMSCoordinateBounds()
+        
+        manager.GET(url,
+            parameters: nil,
+            success: { (operation: AFHTTPRequestOperation!, responseObj: AnyObject!) in
+                if let results = responseObj.objectForKey("results") as! [Dictionary<String, AnyObject>]? {
+                    if let addressInfo = results.first as Dictionary<String, AnyObject>? {
+                        if let geometry = addressInfo["geometry"] as! Dictionary<String, AnyObject>? {
+                            if let location = geometry["location"] as! Dictionary<String, AnyObject>? {
+                                if let lat = location["lat"] as! Double? {
+                                    if let long = location["lng"] as! Double? {
+                                        let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
+                                        var pin = PinMarker(coordinate: coordinate, image: UIImage(named: "marker")!, snippetText: name, imageUrl: imageUrl)
+                                        pin.map = self.mapView
+                                        self.pinMarkerList.append(pin)
+                                        
+                                        if self.pinMarkerList.count > 0 {
+                                            for marker in self.pinMarkerList {
+                                                bounds = bounds.includingCoordinate(marker.position)
+                                            }
+                                            self.updateMapviewToShowAllMarkers(bounds)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            
+            failure: { (operation: AFHTTPRequestOperation!, error: NSError!) in
+                NSLog("Error in geocodeLocations: \(error)")
+            }
+        )
+    }
+
+    private func updateMapviewToShowAllMarkers(markerBounds: GMSCoordinateBounds) -> Void {
+        var update = GMSCameraUpdate.fitBounds(markerBounds, withPadding: 100.0)
+        mapView.moveCamera(update)
+        var zoomUpdate = GMSCameraUpdate.zoomTo(13)
+        mapView.moveCamera(zoomUpdate)
     }
     
     
@@ -141,11 +168,16 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         let placeMarker = marker as! PinMarker
         
         if let infoView = UIView.viewFromNibName("MarkerInfoView") as? MarkerInfoView {
-            
+            infoView.frame.size.height = 50
+            infoView.frame.size.width = 50
+            println(placeMarker.imageUrl)
+            infoView.nameLabel.frame.origin = infoView.center
+            infoView.nameLabel.text = placeMarker.snippet
+            infoView.placeImage.setImageWithURL(placeMarker.imageUrl)
             infoView.layer.cornerRadius = 5
             infoView.clipsToBounds = true
             infoView.layer.borderWidth = 0.5
-            infoView.layer.borderColor = UIColor.purpleColor().CGColor
+            infoView.layer.borderColor = UIColor.greenColor().CGColor
             
             return infoView
         } else {

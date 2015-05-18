@@ -12,6 +12,9 @@ class MarkerInfoView: UIView {
     
     @IBOutlet weak var nameLabel: UILabel!
     
+    @IBOutlet weak var placeImage: UIImageView!
+    
+    
 
     /*
     // Only override drawRect: if you perform custom drawing.

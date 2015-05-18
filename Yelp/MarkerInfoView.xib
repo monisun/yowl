@@ -10,16 +10,30 @@
             <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gcD-TO-Z0L">
-                    <rect key="frame" x="106" y="177" width="392" height="275"/>
+                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PhF-ci-Tnt">
+                    <rect key="frame" x="180" y="236" width="240" height="128"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="50" id="leB-6P-3d5"/>
+                        <constraint firstAttribute="width" constant="50" id="wmr-re-ZPb"/>
+                    </constraints>
+                </imageView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gcD-TO-Z0L">
+                    <rect key="frame" x="137" y="265" width="276" height="70"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="centerY" secondItem="gcD-TO-Z0L" secondAttribute="centerY" id="NlD-FI-CUn"/>
+                <constraint firstAttribute="centerY" secondItem="PhF-ci-Tnt" secondAttribute="centerY" id="b2A-aX-GPi"/>
+                <constraint firstAttribute="centerX" secondItem="gcD-TO-Z0L" secondAttribute="centerX" id="hqd-SS-Dpo"/>
+                <constraint firstAttribute="centerX" secondItem="PhF-ci-Tnt" secondAttribute="centerX" id="pDc-Zn-hkf"/>
+            </constraints>
             <connections>
                 <outlet property="nameLabel" destination="gcD-TO-Z0L" id="uFg-fa-GJi"/>
+                <outlet property="placeImage" destination="PhF-ci-Tnt" id="acG-8t-XAY"/>
             </connections>
         </view>
     </objects>
