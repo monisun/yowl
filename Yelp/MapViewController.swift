@@ -50,7 +50,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     
     func loadMarkers(markerImageName: String, completion: ([PinMarker]) -> Void) {
         var pinList = [PinMarker]()
-//        var shortened = businesses[0..<4]
         
         for business in businesses {
             var markerImage = UIImage(named: markerImageName)
@@ -60,9 +59,14 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
                 println(address)
                 var bounds = GMSCoordinateBounds()
                 
-                geocodeLocations(address, name: business.name!, imageUrl: business.imageURL!, completion: {
-                    
-                })
+                if let name = business.name! as String? {
+                    if let imageUrl = business.imageURL! as NSURL? {
+                        geocodeLocations(address, name: name, imageUrl: imageUrl, completion: {
+                            println("geocode")
+                        })
+                    }
+                }
+
                 
             }
         }
